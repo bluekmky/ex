@@ -8,4 +8,6 @@ urlpatterns = [
     path('view/<int:id>/', views.viewBoard, name='viewBoard'),
     path('updateDelete/<int:id>', views.updateDelete, name='updateDelete'),
     path('updatepage/<int:id>',views.updatepage, name='updatepage'),
+    path('comment/<int:id>',views.comment, name="comment"),
+    path('write.<int:id>',views.write,name='write')
 ]

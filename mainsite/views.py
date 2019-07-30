@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from .models import Board
+from .models import Board, Comment
 from django.core.paginator import Paginator
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 def home(request):
@@ -50,7 +51,9 @@ def viewBoard(request,id):
         board = Board.objects.get(id=id)
         board.lookup += 1
         board.save() 
-        content= { 'board':board }
+    
+        comment = Comment.objects.filter(commentid=id)
+        content = {'board':board ,'comment':comment}
     except:
         errMsg = "서버 오류입니다."
         content={'errMsg':errMsg}
@@ -81,3 +84,18 @@ def updatepage(request,id):
     board = Board.objects.get(id=id)
     content={'board':board}
     return render(request, 'mainsite/update.html', content)
+
+@csrf_exempt
+def comment(request,id):
+    return render(request,'mainsite/write.html',{'id':id})
+
+def write(request,id):
+    author = request.POST.get('author')
+    content = request.POST.get('comment')
+    comment = Comment(
+                commentid = id,
+                author = author,
+                content = content
+    )
+    comment.save()
+    return redirect('viewBoard' ,id=id)
